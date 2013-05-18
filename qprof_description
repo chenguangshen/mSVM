@@ -1,0 +1,7 @@
+--pflow
+--cache_i
+--cache_d
+--cache_l2
+--memory
+--bus_access
+--pctrace
