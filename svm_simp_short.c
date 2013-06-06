@@ -243,11 +243,11 @@ real_t predict_sample(const char *test_sample_name) {
 }
 
 int_t main () {
-	svm_load_model("model_reduced.txt");
+	svm_load_model("model/model_reduced.txt");
 	//print_model("model_get.txt");
 	hexagon_sim_init_timer();
 	hexagon_sim_start_timer();
-	printf("%lf\n", predict_sample(("testcase_200.txt")));
+	printf("%lf\n", predict_sample(("data/testcase_200.txt")));
 	hexagon_sim_end_timer();
 	hexagon_sim_show_timer(stdout);
 	printf(FORMAT, round_real(2.38123453f));
