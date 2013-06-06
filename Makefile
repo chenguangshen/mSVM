@@ -12,6 +12,9 @@ svm:
 svm_short:
 	$(CXX) $(CFLAG) $(PACK) svm_simp_short.c -o svm -lm 
 
+svm_fixp:
+	$(CXX) $(CFLAG) $(PACK) svm_simp_fixp.c -o svm -lm 
+
 svm_hexagon:
 	$(HCXX) -mv$(VERSION) $(CFLAG) -g svm_simp.c -o svm_hexagon -lm -lhexagon
 
@@ -21,6 +24,9 @@ svm_hexagon_llvm:
 svm_hexagon_short:
 	$(HCXX) -mv$(VERSION) $(CFLAG) svm_simp_short.c -o svm_hexagon_short -lm -lhexagon
 
+svm_hexagon_fixp:
+	$(HCXX) -mv$(VERSION) $(CFLAG) svm_simp_fixp.c -o svm_hexagon_fixp -lm -lhexagon
+
 svm_hexagon_llvm_short:
 	$(HCLANG) -mv$(VERSION) $(CFLAG) svm_simp_short.c -o svm_hexagon_short_llvm -lm -lhexagon
 
@@ -28,7 +34,7 @@ sim:
 	$(HSIM) -mv$(VERSION) --timing svm_hexagon_short
 
 clean:
-	rm -f *~ *.o svm svm_hexagon svm_hexagon_llvm svm_hexagon_short svm_hexagon_short_llvm
+	rm -f *~ *.o svm svm_hexagon svm_hexagon_llvm svm_hexagon_short svm_hexagon_short_llvm svm_hexagon_fixp
 
 
 # test_svm_cpp:
