@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "hexagon_sim_timer.h"
+// #include "hexagon_sim_timer.h"
 
 #define NR_CLASS 11	/* number of classes */
 #define NR_FEATURE 10 /* number of features */
@@ -12,6 +12,7 @@
 #define FORMAT "%f\n"
 #define PREC "%f\n"
 #define SCALE 1000.0
+#define SCALE1 1
 
 enum { C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR };	/* svm_type */
 enum { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; /* kernel_type */
@@ -56,7 +57,10 @@ data_type round_real(real_t x) {
 	}
 	//data_type i = round(x * SCALE);
 	//printf("%f %d\n", x, i);
-	return x * SCALE;
+//	printf("x=%f\n", x);
+//	data_type res = SCALE * x;
+//	printf("scaled x=%d\n", res);
+	return SCALE * x;
 }
 
 void svm_load_model(const char *model_file_name)
@@ -143,30 +147,42 @@ void svm_load_model(const char *model_file_name)
 // 	fclose(output1);
 // }
 
-real_t rbf_kernel(const Node x[NR_FEATURE], const Node y[NR_FEATURE]) {
-	real_t sum = 0;
+
+// have to use floating point for kernel computation
+// otherwise will result in overflow for the exp operation
+
+// instead of completely removing floating point,
+// we try to minimize the number of fp operations
+data_type rbf_kernel(const Node x[NR_FEATURE], const Node y[NR_FEATURE]) {
+	int sum = 0;
 	int_t i = 0;
 	for (i = 0; i < NR_FEATURE; i++) {
 		//printf("x=%d y=%d\n", x[i].value, y[i].value);
-		real_t d = (((real_t)x[i].value) / SCALE) - (((real_t)y[i].value) / SCALE);
+		int d = x[i].value - y[i].value;
 		//printf("%f\n", d);
 		sum += d*d;
 	}
-	return exp(-model.gamma * sum);
+	// this is the only line of fp operation
+	real_t res = exp(-model.gamma * (real_t)sum / SCALE / SCALE);
+	data_type res_scale = res * SCALE;
+	// printf("res=%f\n", res);
+	// printf("scaled res=%d\n", res_scale);
+	return res_scale;
 }
 
-static real_t dec_values[NR_PAIR];
-static real_t kvalue[NR_L];
-static int_t start[NR_CLASS];
-static int_t vote[NR_CLASS];
+static data_type dec_values[NR_PAIR];
+static data_type kvalue[NR_L];
+static data_type start[NR_CLASS];
+static data_type vote[NR_CLASS];
 
-int_t svm_predict(const Sample sample) {
+data_type svm_predict(const Sample sample) {
 	//const Node *x = sample.data;
-	int_t i;
+	data_type i;
 
-	for(i = 0; i < NR_L; i++)
+	for(i = 0; i < NR_L; i++) {
 		kvalue[i] = rbf_kernel(sample.data, model.SV[i]);
-
+		//printf("%f\n", kvalue[i]);
+	}
 	start[0] = 0;
 	for(i = 1; i < NR_CLASS; i++) {
 		start[i] = start[i - 1] + model.nSV[i - 1];
@@ -176,26 +192,28 @@ int_t svm_predict(const Sample sample) {
 	for(i = 0; i < NR_CLASS; i++)
 		vote[i] = 0;
 
-	int_t p=0, j = 0;
+	data_type p=0, j = 0;
 	for(i=0;i<NR_CLASS;i++){
 		for(j=i+1;j<NR_CLASS;j++) {
-			real_t sum = 0;
-			int_t si = start[i];
-			int_t sj = start[j];
-			int_t ci = model.nSV[i];
-			int_t cj = model.nSV[j];
+			data_type sum = 0;
+			data_type si = start[i];
+			data_type sj = start[j];
+			data_type ci = model.nSV[i];
+			data_type cj = model.nSV[j];
 			
-			int_t k;
+			data_type k;
 			data_type *coef1 = model.sv_coef[j-1];
 			data_type *coef2 = model.sv_coef[i];
 			for(k=0;k<ci;k++){
-				real_t ttt = (((real_t)coef1[si+k]) / SCALE) * kvalue[si+k];
-				//printf("%d %f %f\n", coef1[si+k], kvalue[si+k], ttt);
-				sum += ttt;
+				//printf("%d %f\n", coef1[si+k], kvalue[si+k]);
+				//printf("%d %f\n", a, b);
+				//data_type ttt = coef1[si+k] * kvalue[si+k];
+				//printf("%d\n", ttt);
+				sum += coef1[si+k] * kvalue[si+k] / 1000;
 			}
 			for(k=0;k<cj;k++)
-				sum += (((real_t)coef2[sj+k]) / SCALE) * kvalue[sj+k];
-			sum -= ((real_t)model.rho[p]) / SCALE;
+				sum += coef2[sj+k] * kvalue[sj+k] / 1000;
+			sum -= model.rho[p];
 			//printf("%f\n", sum);
 			dec_values[p] = sum;
 
@@ -245,12 +263,18 @@ real_t predict_sample(const char *test_sample_name) {
 int_t main () {
 	svm_load_model("model/model_reduced.txt");
 	//print_model("model_get.txt");
-	hexagon_sim_init_timer();
-	hexagon_sim_start_timer();
-	printf("%lf\n", predict_sample(("data/testcase_200.txt")));
-	hexagon_sim_end_timer();
-	hexagon_sim_show_timer(stdout);
-	printf(FORMAT, round_real(2.38123453f));
+	// hexagon_sim_init_timer();
+	// hexagon_sim_start_timer();
+	real_t result = predict_sample("data/testcase_200.txt");
+	printf("%lf\n", result);
+	// hexagon_sim_end_timer();
+	// hexagon_sim_show_timer(stdout);
+	printf("test scaling\n");
+
+	real_t xxx = 0.5;
+	data_type a = round_real(xxx);
+	printf("%d\n", a);
+	
 	printf(FORMAT, min);
 	printf(FORMAT, max);
 	return 0;
