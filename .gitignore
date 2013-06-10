@@ -2,3 +2,5 @@ change_dimension/
 qprof_description
 pmu_statsfile.txt
 stats.txt
+include/
+test_fix_op.c

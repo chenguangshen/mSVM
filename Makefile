@@ -31,10 +31,16 @@ svm_hexagon_llvm_short:
 	$(HCLANG) -mv$(VERSION) $(CFLAG) svm_simp_short.c -o svm_hexagon_short_llvm -lm -lhexagon
 
 sim:
-	$(HSIM) -mv$(VERSION) --timing svm_hexagon_short
+	$(HSIM) -mv$(VERSION) --timing svm_hexagon_fixp
+
+
+
+fix_hexagon:
+	$(HCXX) -mv$(VERSION) $(CFLAG) -g include/basic_op.c include/basic_op.h test_fix_op.c -o fix_op -lm -lhexagon
+
 
 clean:
-	rm -f *~ *.o svm svm_hexagon svm_hexagon_llvm svm_hexagon_short svm_hexagon_short_llvm svm_hexagon_fixp
+	rm -f *~ *.o svm svm_hexagon fix_op svm_hexagon_llvm svm_hexagon_short svm_hexagon_short_llvm svm_hexagon_fixp
 
 
 # test_svm_cpp:
