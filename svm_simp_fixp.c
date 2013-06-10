@@ -161,9 +161,11 @@ data_type rbf_kernel(const Node x[NR_FEATURE], const Node y[NR_FEATURE]) {
 		//printf("%f\n", d);
 		sum += d*d;
 	}
-	// this is the only line of fp operation
+	//#############################################
+	// this is the only two lines of floating point operation
 	real_t res = exp(-model.gamma * (real_t)sum / SCALE / SCALE);
 	data_type res_scale = res * SCALE;
+	//#############################################
 	// printf("res=%f\n", res);
 	// printf("scaled res=%d\n", res_scale);
 	return res_scale;
