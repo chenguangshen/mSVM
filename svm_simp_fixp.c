@@ -288,10 +288,9 @@ int main () {
 // 71351558 cycles - 0.71ms for each sample
 // 84964B memory
 
-
 // on ndk: 0.093494s for 200 samples, 0.47ms for each sample
 
 
-// libsvm unoptimized:
+// libsvm unoptim	ized:
 // on ndk: 0.1427328s for 200 samples, 0.71ms for each sample
-// on hexagon: ??
+// on hexagon: 79735545, 0.79ms for each sample

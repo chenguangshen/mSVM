@@ -4,3 +4,6 @@ pmu_statsfile.txt
 stats.txt
 include/
 test_hexagon_op.c
+gprof2dot.py
+gmon.*
+*.o

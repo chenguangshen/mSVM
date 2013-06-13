@@ -22,10 +22,13 @@ svm_hexagon_llvm:
 	$(HCLANG) -mv$(VERSION) $(CFLAG) -g svm_simp.c -o svm_hexagon_llvm -lm -lhexagon
 
 svm_hexagon_short:
-	$(HCXX) -mv$(VERSION) $(CFLAG) svm_simp_short.c -o svm_hexagon_short -lm -lhexagon
+	$(HCXX) -mv$(VERSION) svm_simp_short.c -o svm_hexagon_short -lm -lhexagon
+	$(HSIM) -mv$(VERSION) --timing --profile svm_hexagon_short
 
 svm_hexagon_fixp:
-	$(HCXX) -mv$(VERSION) $(CFLAG) svm_simp_fixp.c -o svm_hexagon_fixp -lm -lhexagon
+	$(HCXX) -mv$(VERSION) -O2 -c -o svm_hexagon_fixp.o svm_simp_fixp.c 
+	$(HCXX) -mv$(VERSION) -O2 svm_hexagon_fixp.o -o svm_hexagon_fixp -lhexagon
+	$(HSIM) -mv$(VERSION) --timing --profile svm_hexagon_fixp
 
 svm_hexagon_fixp_clang:
 	$(HCLANG) -mv$(VERSION) $(CFLAG) svm_simp_fixp.c -o svm_hexagon_fixp -lm -lhexagon
@@ -34,7 +37,7 @@ svm_hexagon_llvm_short:
 	$(HCLANG) -mv$(VERSION) $(CFLAG) svm_simp_short.c -o svm_hexagon_short_llvm -lm -lhexagon
 
 sim:
-	$(HSIM) -mv$(VERSION) --timing svm_hexagon_fixp
+	$(HSIM) -mv$(VERSION) --timing svm_hexagon_short
 
 
 hexagon_op:
@@ -42,7 +45,7 @@ hexagon_op:
 
 
 clean:
-	rm -f *~ *.o svm svm_hexagon hexagon_op svm_hexagon_llvm svm_hexagon_short svm_hexagon_short_llvm svm_hexagon_fixp
+	rm -f *~ *.o stats.txt gmon.* svm svm_hexagon hexagon_op svm_hexagon_llvm svm_hexagon_short svm_hexagon_short_llvm svm_hexagon_fixp
 
 
 # test_svm_cpp:
