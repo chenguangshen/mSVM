@@ -3,4 +3,4 @@ qprof_description
 pmu_statsfile.txt
 stats.txt
 include/
-test_fix_op.c
+test_hexagon_op.c

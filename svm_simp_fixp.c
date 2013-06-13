@@ -10,6 +10,7 @@
 #define NR_L 349	/* total #SV */
 #define NR_PAIR NR_CLASS * (NR_CLASS - 1) / 2
 #define SCALE 1000.0
+#define FORMAT "%f\n"
 
 enum { C_SVC, NU_SVC, ONE_CLASS, EPSILON_SVR, NU_SVR };	/* svm_type */
 enum { LINEAR, POLY, RBF, SIGMOID, PRECOMPUTED }; /* kernel_type */
@@ -170,10 +171,10 @@ Word16 rbf_kernel(const Node x[NR_FEATURE], const Node y[NR_FEATURE]) {
 	return res_scale;
 }
 
-static Word16 dec_values[NR_PAIR];
-static Word16 kvalue[NR_L];
-static Word16 start[NR_CLASS];
-static Word16 vote[NR_CLASS];
+static Word16  dec_values[NR_PAIR];
+static Word16  kvalue[NR_L];
+static Word16  start[NR_CLASS];
+static Word16  vote[NR_CLASS];
 
 Word16 svm_predict(const Sample sample) {
 	//const Node *x = sample.data;
@@ -260,7 +261,7 @@ Real32 predict_sample(const char *test_sample_name) {
 	return (Real32)correct / (Real32)n;
 }
 
-Word16 main () {
+int main () {
 	svm_load_model("model/model_reduced.txt");
 	//print_model("model_get.txt");
 	hexagon_sim_init_timer();
@@ -281,4 +282,8 @@ Word16 main () {
 	return 0;
 }
 
-// Currently, this implementation uses 64666912 cycles - 0.6ms for each sample
+// Currently, this implementation uses 64769529 cycles - 0.65ms for each sample
+// 85236B memory
+// using clang:
+// 71351558 cycles - 0.71ms for each sample
+// 84964B memory
