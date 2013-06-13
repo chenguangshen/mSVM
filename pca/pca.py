@@ -24,7 +24,7 @@ import sklearn
 # label = np.array(label)
 # print data.shape
 
-X_train, y_train = load_svmlight_file("/Users/cgshen/workspace/mSVM/data/vowel.scale")
+X_train, y_train = load_svmlight_file("/Users/cgshen/workspace/mSVM/data/vowel.scale.t")
 
 data = np.array(X_train.todense())
 label = np.array(y_train)
@@ -32,9 +32,9 @@ print data.shape
 print label.shape
 label = [int(t) for t in label]
 
-pca = PCA(n_components=8)
+pca = PCA(n_components=9)
 data_reduced = pca.fit_transform(data)
 print data_reduced.shape
 
-sklearn.datasets.dump_svmlight_file(X=data_reduced, y=label, f="/Users/cgshen/workspace/mSVM/data/vowel.scale.pca8")
+sklearn.datasets.dump_svmlight_file(X=data_reduced, y=label, f="/Users/cgshen/workspace/mSVM/data/vowel.scale.t.pca9")
 # libsvm = sklearn.svm.SVC(kernel='rbf', gamma=0.8, C=5, tol=0.5)

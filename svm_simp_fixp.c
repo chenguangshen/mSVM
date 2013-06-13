@@ -287,3 +287,6 @@ int main () {
 // using clang:
 // 71351558 cycles - 0.71ms for each sample
 // 84964B memory
+
+
+// on ndk: 0.093494s for 100 samples, 0.93ms for each sample
