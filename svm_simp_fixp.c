@@ -289,4 +289,9 @@ int main () {
 // 84964B memory
 
 
-// on ndk: 0.093494s for 100 samples, 0.93ms for each sample
+// on ndk: 0.093494s for 200 samples, 0.47ms for each sample
+
+
+// libsvm unoptimized:
+// on ndk: 0.1427328s for 200 samples, 0.71ms for each sample
+// on hexagon: ??
