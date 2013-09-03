@@ -45,7 +45,7 @@ hexagon_op:
 
 
 clean:
-	rm -f *~ *.o qprof*.out stats.txt gmon.* svm svm_hexagon hexagon_op svm_hexagon_llvm svm_hexagon_short svm_hexagon_short_llvm svm_hexagon_fixp
+	rm -f *~ *.o qprof*.out stats.txt gmon.* svm svm_hexagon hexagon_op svm_hexagon_llvm svm_hexagon_short svm_hexagon_short_llvm svm_hexagon_fixp convert
 
 
 # test_svm_cpp:

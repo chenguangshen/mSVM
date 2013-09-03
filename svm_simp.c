@@ -46,20 +46,20 @@ static Sample test_sample;
 static real_t max = -1e6, min = 1e6;
 
 real_t round_real(real_t x) {
-	if (x > max) {
-		max = x;
-	}
-	if (x < min) {
-		min = x;
-	}
-	//printf("%lf\n", x);
-	real_t result = 0;
-	char buffer[128];
-	memset(buffer, 0, sizeof(buffer));
-	sprintf(buffer, PREC, x);
-	sscanf(buffer, FORMAT, &result);
+	// if (x > max) {
+	// 	max = x;
+	// }
+	// if (x < min) {
+	// 	min = x;
+	// }
+	// //printf("%lf\n", x);
+	// real_t result = 0;
+	// char buffer[128];
+	// memset(buffer, 0, sizeof(buffer));
+	// sprintf(buffer, PREC, x);
+	// sscanf(buffer, FORMAT, &result);
 	//return x * 100;
-	return result;
+	return x;
 }
 
 void svm_load_model(const char *model_file_name)
@@ -234,15 +234,15 @@ real_t predict_sample(const char *test_sample_name) {
 }
 
 int main () {
-	svm_load_model("model_reduced.txt");
+	svm_load_model("model/model_reduced.txt");
 	//print_model("model_get.txt");
 	// hexagon_sim_init_timer();
 	// hexagon_sim_start_timer();
-	printf(FORMAT, predict_sample(("testcase_200.txt")));
+	printf(FORMAT, predict_sample(("data/testcase_200.txt")));
 	// hexagon_sim_end_timer();
 	// hexagon_sim_show_timer(stdout);
-	printf(FORMAT, round_real(2.38123453f));
-	printf(FORMAT, min);
-	printf(FORMAT, max);
+	// printf(FORMAT, round_real(2.38123453f));
+	// printf(FORMAT, min);
+	// printf(FORMAT, max);
 	return 0;
 }
