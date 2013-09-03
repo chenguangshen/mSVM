@@ -43,7 +43,7 @@ void exit_input_error(int line_num)
 
 void predict(FILE *input, FILE *output)
 {
-	FILE *output1 = fopen ("testcase_200.txt", "w");
+	FILE *output1 = fopen ("tu/testcase_200.txt", "w");
 	printf("in predict..\n");
   	int correct = 0;
 	int total = 0;
@@ -140,34 +140,34 @@ void predict(FILE *input, FILE *output)
 
 int main() 
 {
-	FILE *input = fopen("test.txt", "r"); 
-	FILE *output = fopen ("test.txt.result", "w");
-	FILE *output1 = fopen ("model_revised.txt", "w");
+	FILE *input = fopen("tu/test-random-200.txt.scale", "r"); 
+	FILE *output = fopen ("tu/test-random-200.txt.result", "w");
+	FILE *output1 = fopen ("tu/model_reduced.txt", "w");
   	printf("before get model\n");
-	model = svm_load_model("vowel.scale.model");
+	model = svm_load_model("tu/train-random-1000.txt.scale.model");
   	printf("after get model\n");
 
 	int i = 0, j = 0;
 	fprintf(output1, "rho\n");
-	for (j = 0; j < 55; j++) {
+	for (j = 0; j < 10; j++) {
 		fprintf(output1, "%lf\n", model->rho[j]);
 	}
 	fprintf(output1, "label\n");
-	for (j = 0; j < 11; j++) {
+	for (j = 0; j < 5; j++) {
 		fprintf(output1, "%d ", model->label[j]);
 	}
 	fprintf(output1, "\n");
 	fprintf(output1, "nSV\n");
-	for (j = 0; j < 11; j++) {
+	for (j = 0; j < 5; j++) {
 		fprintf(output1, "%d ", model->nSV[j]);
 	}
 	fprintf(output1, "\n");
-	for (j = 0; j < 349; j++) {
+	for (j = 0; j < 539; j++) {
 		fprintf(output1, "SV-No.%d\n", (j + 1));
-		for (i = 0; i < 10; i++) {
+		for (i = 0; i < 4; i++) {
 			fprintf(output1, "%.15f\n", model->sv_coef[i][j]);
 		}
-		for (i = 0; i < 10; i++) {
+		for (i = 0; i < 13; i++) {
 			fprintf(output1, "%.7f\n", model->SV[j][i].value);
 		}
 	}	

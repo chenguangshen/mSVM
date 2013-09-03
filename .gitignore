@@ -9,3 +9,8 @@ gmon.*
 *.o
 qprof-short/
 qprof-fixp/
+output.txt
+svm.cpp
+svm.h
+tu/
+

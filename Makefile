@@ -28,7 +28,7 @@ svm_hexagon_short:
 svm_hexagon_fixp:
 	$(HCXX) -mv$(VERSION) -O2 -c -o svm_hexagon_fixp.o svm_simp_fixp.c 
 	$(HCXX) -mv$(VERSION) -O2 svm_hexagon_fixp.o -o svm_hexagon_fixp -lhexagon
-	$(HSIM) -mv$(VERSION) --timing --qprof qprof_description svm_hexagon_fixp
+	$(HSIM) -mv$(VERSION) --timing --profile svm_hexagon_fixp
 
 svm_hexagon_fixp_clang:
 	$(HCLANG) -mv$(VERSION) $(CFLAG) svm_simp_fixp.c -o svm_hexagon_fixp -lm -lhexagon

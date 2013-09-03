@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "hexagon_sim_timer.h"
+// #include "hexagon_sim_timer.h"
 
-#define NR_CLASS 11	/* number of classes */
-#define NR_FEATURE 10 /* number of features */
-#define NR_L 349	/* total #SV */
-#define NR_PAIR NR_CLASS * (NR_CLASS - 1) / 2
+#define NR_CLASS 5	/* number of classes */
+#define NR_FEATURE 13 /* number of features */
+#define NR_L 539	/* total #SV */
+#define NR_PAIR 10
 #define SCALE 1000.0
 #define FORMAT "%f\n"
 
@@ -33,7 +33,7 @@ typedef struct svm_model {
 	Word16 kernel_type;
 	Real32 gamma;
 	Node SV[NR_L][NR_FEATURE];		/* SVs (SV[l]) */
-	Word16 sv_coef[NR_FEATURE][NR_L];	/* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
+	Word16 sv_coef[NR_CLASS - 1][NR_L];	/* coefficients for SVs in decision functions (sv_coef[k-1][l]) */
 	Word16 rho[NR_PAIR];		/* constants in decision functions (rho[k*(k-1)/2]) */
 	Word16 label[NR_CLASS];		/* label of each class (label[k]) */
 	Word16 nSV[NR_CLASS];		/* number of SVs for each class (nSV[k]) */ 
@@ -98,7 +98,7 @@ void svm_load_model(const char *model_file_name)
 	for (j = 0; j < NR_L; j++) {
 		fscanf(fp, "%s\n", buffer);
 		// get sv_coef
-		for (i = 0; i < NR_FEATURE; i++) {
+		for (i = 0; i < NR_CLASS - 1; i++) {
 			fscanf(fp, FORMAT, &temp);
 			//printf("%lf\n", temp);
 			model.sv_coef[i][j] = round_real(temp);
@@ -112,6 +112,38 @@ void svm_load_model(const char *model_file_name)
 		}
 	}
 	fclose(fp);
+
+	// printf("static short rho[NR_PAIR]={\n");
+	// printf("%hd", model.rho[0]);
+	// for (i = 1; i < NR_PAIR; i++) {
+	// 	printf(",%hd", model.rho[i]);
+	// }
+	// printf("}\n");
+
+	printf("static short sv_coef[NR_CLASS - 1][NR_L]={\n");
+	for (i = 0; i < NR_CLASS - 1; i++) {
+		printf("{");
+		printf("%hd", model.sv_coef[i][0]);
+		for (j = 1; j < NR_L; j++) {
+			printf(",%hd", model.sv_coef[i][j]);
+		}
+		printf("},\n");
+	}
+	printf("}\n");
+
+	// FILE *fout = fopen("output.txt", "w");
+
+	// fprintf(fout, "static short SV[NR_L][NR_FEATURE]={\n");
+	// for (j = 0; j < NR_L; j++) {
+	// 	fprintf(fout, "{");
+	// 	fprintf(fout, "%hd", model.SV[j][0].value);
+	// 	for (i = 1; i < NR_FEATURE; i++) {
+	// 		fprintf(fout, ",%hd", model.SV[j][i].value);
+	// 	}
+	// 	fprintf(fout, "},\n");
+	// }
+	// fprintf(fout, "}\n");
+	// fclose(fout);
 }
 
 // void print_model(const char *model_file_name) {
@@ -184,6 +216,9 @@ Word16 svm_predict(const Sample sample) {
 		kvalue[i] = rbf_kernel(sample.data, model.SV[i]);
 		//printf("%f\n", kvalue[i]);
 	}
+
+	//printf("%hd\n", kvalue[0]);
+
 	start[0] = 0;
 	for(i = 1; i < NR_CLASS; i++) {
 		start[i] = start[i - 1] + model.nSV[i - 1];
@@ -241,35 +276,53 @@ Real32 predict_sample(const char *test_sample_name) {
 	Word16 n = -1;
 	fscanf(input, "%hd", &n);
 	Real32 temp;
+	printf("{\n");
 	for (i = 0; i < n; i++) {
 		Word16 label = -1;
 		fscanf(input, "%hd", &label);
+		// if (i < n - 1) {
+		// 	printf("%hd,", label);
+		// }
+		// else {
+		// 	printf("%hd", label);
+		// }
+		
+		//printf("{");
 		for (j = 0; j < NR_FEATURE; j++) {
 			fscanf(input, FORMAT, &temp);
 			//printf("%lf\n", temp);
 			test_sample.data[j].value = round_real(temp);
 			test_sample.data[j].index = (j + 1);
+
+			// if (j < NR_FEATURE - 1) {
+			// 	printf("%hd,", test_sample.data[j].value);
+			// }
+			// else {
+			// 	printf("%hd", test_sample.data[j].value);
+			// }
 		}
+		//printf("},\n");
 		Word16 predict = svm_predict(test_sample);
 		//printf("%d\n", predict);
 		if (predict == label) {
 			correct++;
 		}
 	}
+	printf("}\n");
 	fclose(input);
 	printf("%hd %hd\n", correct, n);
 	return (Real32)correct / (Real32)n;
 }
 
 int main () {
-	svm_load_model("model/model_reduced.txt");
+	svm_load_model("tu/model_reduced.txt");
 	//print_model("model_get.txt");
-	hexagon_sim_init_timer();
-	hexagon_sim_start_timer();
-	Real32 result = predict_sample("data/testcase_200.txt");
+	// hexagon_sim_init_timer();
+	// hexagon_sim_start_timer();
+	Real32 result = predict_sample("tu/testcase_200.txt");
 	printf("%lf\n", result);
-	hexagon_sim_end_timer();
-	hexagon_sim_show_timer(stdout);
+	// hexagon_sim_end_timer();
+	// hexagon_sim_show_timer(stdout);
 
 
 	// printf("test scaling\n");
